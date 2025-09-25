@@ -1,0 +1,85 @@
+---
+interface FeatureItem {
+  title: string;
+  description: string;
+  icon?: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  features: FeatureItem[];
+}
+
+const {
+  eyebrow,
+  title,
+  description,
+  features,
+} = Astro.props as Props;
+---
+<section class="section-container">
+  <div class="intro">
+    {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+    <h2>{title}</h2>
+    {description && <p>{description}</p>}
+  </div>
+  <div class="grid grid-cols-3">
+    {features.map((feature) => (
+      <article class="card">
+        {feature.icon && <span class="icon">{feature.icon}</span>}
+        <h3>{feature.title}</h3>
+        <p>{feature.description}</p>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .intro {
+    max-width: 680px;
+    margin: 0 auto 2.5rem;
+    text-align: center;
+  }
+
+  .intro p {
+    color: var(--color-muted);
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+  }
+
+  .icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.9rem;
+    background: rgba(59, 91, 253, 0.1);
+    color: var(--color-primary);
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  @media (max-width: 900px) {
+    .grid.grid-cols-3 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 600px) {
+    .grid.grid-cols-3 {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+  }
+</style>

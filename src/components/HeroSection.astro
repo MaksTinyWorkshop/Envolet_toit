@@ -1,0 +1,95 @@
+---
+interface CallToAction {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  content: string;
+  primaryCta?: CallToAction;
+  secondaryCta?: CallToAction;
+  image?: {
+    src: string;
+    alt?: string;
+  };
+}
+
+const {
+  eyebrow,
+  title,
+  content,
+  primaryCta,
+  secondaryCta,
+  image,
+} = Astro.props as Props;
+---
+<section class="section-container hero">
+  <div class="copy">
+    {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+    <h1>{title}</h1>
+    <p set:html={content} />
+    {(primaryCta || secondaryCta) && (
+      <div class="button-group">
+        {primaryCta && (
+          <a class="button primary" href={primaryCta.href}>{primaryCta.label}</a>
+        )}
+        {secondaryCta && (
+          <a class="button secondary" href={secondaryCta.href}>
+            {secondaryCta.label}
+          </a>
+        )}
+      </div>
+    )}
+  </div>
+  {image && (
+    <div class="visual">
+      <img src={image.src} alt={image.alt ?? ''} loading="lazy" />
+    </div>
+  )}
+</section>
+
+<style>
+  .hero {
+    display: grid;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .copy h1 {
+    margin-top: 0;
+    margin-bottom: 1.25rem;
+    line-height: 1.05;
+    font-size: clamp(2.4rem, 4vw, 3.6rem);
+  }
+
+  .copy p {
+    margin: 0 0 2rem;
+    color: var(--color-muted);
+    font-size: 1.05rem;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+  }
+
+  @media (min-width: 900px) {
+    .hero {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .visual img {
+      width: 100%;
+      border-radius: 1.75rem;
+      box-shadow: var(--shadow-soft);
+    }
+  }
+</style>

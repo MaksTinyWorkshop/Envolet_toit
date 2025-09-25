@@ -1,0 +1,46 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+type MarkdownRender = Awaited<
+  ReturnType<CollectionEntry<'sections'>['render']>
+>;
+
+interface Props {
+  title?: string;
+  Content: MarkdownRender['Content'];
+}
+
+const { title, Content } = Astro.props as Props;
+---
+<section class="section-container markdown">
+  {title && <h2>{title}</h2>}
+  <div class="prose">
+    <Content />
+  </div>
+</section>
+
+<style>
+  .markdown {
+    max-width: 780px;
+  }
+
+  .markdown h2 {
+    margin-top: 0;
+  }
+
+  .prose :global(p) {
+    margin-bottom: 1.5rem;
+    color: var(--color-muted);
+  }
+
+  .prose :global(h3) {
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    padding-left: 1.5rem;
+    color: var(--color-muted);
+  }
+</style>
