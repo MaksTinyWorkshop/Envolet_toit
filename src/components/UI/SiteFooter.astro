@@ -1,0 +1,89 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__info">
+      <p class="footer__brand">Envolet'toit – SAV VELUX</p>
+      <p class="footer__details">1 rue du Volet, 35000 RENNES</p>
+      <p class="footer__details">02 98 66 09 67</p>
+    </div>
+    <div class="footer__badge" aria-hidden="true">
+      <img src="/images/veluxXpert.svg" alt="Velux Expert" loading="lazy" />
+    </div>
+  </div>
+  <p class="footer__copyright">
+    © {year} Envolet'toit.
+    <span>
+      <a class="footer__link" href="/mentions-legales">Mentions légales</a>
+    </span>
+  </p>
+</footer>
+
+<style>
+  .footer {
+    background: #020202;
+    color: #fff;
+    max-height: 9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .footer__inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-wrap: nowrap;
+  }
+
+  .footer__info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+  }
+
+  .footer__badge {
+    display: flex;
+    align-items: center;
+  }
+
+  .footer__brand {
+    margin: 0;
+    font-family: var(fontBold);
+    font-size: clamp(0.95rem, 2.2vw, 1.1rem);
+  }
+
+  .footer__details {
+    margin: 0;
+  }
+
+  .footer__link {
+    margin-top: 0.25rem;
+    color: inherit;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.75rem;
+  }
+
+  .footer__link:hover {
+    text-decoration: underline;
+  }
+
+  .footer__badge img {
+    width: clamp(88px, 20vw, 110px);
+    height: auto;
+    display: block;
+  }
+
+  .footer__copyright {
+    margin: 0;
+    font-size: 0.65rem;
+    opacity: 0.55;
+    text-align: center;
+  }
+</style>

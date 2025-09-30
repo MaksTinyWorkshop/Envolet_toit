@@ -1,18 +1,19 @@
 ---
 component: hero
-eyebrow: Studio web Astro
-title: "Des sites vitrines éclairs pour votre activité"
+eyebrow: ""
+title: "Specialiste de la pose d'accessoires de Velux"
 content: >-
-  Notre boilerplate Astro met l'accent sur la vitesse, la rédaction claire et la
-  conversion. Composez vos pages à partir de sections lisibles et modifiez-les
-  sans toucher au code.
+  Nous avons la solution avec votre produit Velux
 primaryCta:
-  label: "Démarrer un projet"
+  label: "DÉPANNAGE"
   href: "/contact"
 secondaryCta:
-  label: "Voir nos services"
+  label: "ACCESSOIRES"
   href: "/services"
+tertiaryCta:
+  label: "QUI SOMMES NOUS"
+  href: "/a-propos"
 image:
-  src: "/images/hero-placeholder.svg"
+  src: "/images/Home-bg.png"
   alt: "Présentation de la maquette du site"
 ---

@@ -1,0 +1,57 @@
+---
+import Spacer from "@components/UI/Spacer.astro";
+import styles from "./navbar.module.scss";
+import CtaButton from "@components/CTA/CtaButton.astro";
+
+const currentPath = Astro.url.pathname;
+
+const baseMenu = [
+  { name: "DEPANNAGE", href: "/depannage" },
+  { name: "ACCESSOIRES", href: "/accessoires" },
+  { name: "QUI SOMMES NOUS ?", href: "/a-propos" },
+];
+
+const menu = baseMenu.map((item) => ({
+  ...item,
+  active:
+    item.href === "/" ? currentPath === "/" : currentPath.startsWith(item.href),
+}));
+
+const menuLogo = {
+  url: "/images/logo.svg",
+  alt: "Envolet & Toit",
+};
+---
+
+<nav class={styles.navbar}>
+  <div class={styles.logo}>
+    <a href="/">
+      <img src={menuLogo.url} alt={menuLogo.alt} />
+    </a>
+  </div>
+  <input
+    type="checkbox"
+    id="burger"
+    class={styles.toggle}
+    aria-controls="menu-panel"
+  />
+  <label class={styles.burger} for="burger" aria-label="Basculer le menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </label>
+  <label for="burger" class={styles.overlay} aria-hidden="true"></label>
+  <div id="menu-panel" class={styles.menulist}>
+    <ul>
+      {
+        menu.map((item) => (
+          <li class={item.active ? styles.active : ""}>
+            <a href={item.href}>{item.name}</a>
+          </li>
+        ))
+      }
+    </ul>
+    <Spacer size="3rem" axis="vertical" />
+    <CtaButton />
+  </div>
+</nav>

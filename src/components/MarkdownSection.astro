@@ -1,46 +1,107 @@
 ---
-import type { CollectionEntry } from 'astro:content';
+import type { CollectionEntry } from "astro:content";
 
 type MarkdownRender = Awaited<
-  ReturnType<CollectionEntry<'sections'>['render']>
+  ReturnType<CollectionEntry<"sections">["render"]>
 >;
 
+interface Images {
+  src: string;
+  alt?: string;
+  caption?: string;
+}
 interface Props {
   title?: string;
-  Content: MarkdownRender['Content'];
+  description?: string;
+  images?: Images[];
+  Content: MarkdownRender["Content"];
 }
 
-const { title, Content } = Astro.props as Props;
+const { title, description, images, Content } = Astro.props as Props;
 ---
-<section class="section-container markdown">
-  {title && <h2>{title}</h2>}
-  <div class="prose">
-    <Content />
-  </div>
-</section>
+
+{
+  description === "entreprise" && (
+    <section class="section-container markdown">
+      {title && <h1>{title}</h1>}
+
+      {images && images.length > 0 && (
+        <div class="image-gallery">
+          {images.map((image) => (
+            <figure>
+              <img src={image.src} alt={image.alt ?? ""} />
+              {image.caption && <figcaption>{image.caption}</figcaption>}
+            </figure>
+          ))}
+        </div>
+      )}
+      <div class="prose">
+        <Content />
+      </div>
+    </section>
+  )
+}
+
+{
+  description === "team" && (
+    <section class="section-container markdown">
+      {title && <h2>{title}</h2>}
+      <div class="prose">
+        <Content />
+      </div>
+    </section>
+  )
+}
 
 <style>
   .markdown {
+    margin: 0 auto;
+    text-align: center;
     max-width: 780px;
-  }
 
-  .markdown h2 {
-    margin-top: 0;
-  }
+    h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      margin-top: 1rem;
+    }
 
-  .prose :global(p) {
-    margin-bottom: 1.5rem;
-    color: var(--color-muted);
-  }
+    h2 {
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      margin-top: 1rem;
+    }
 
-  .prose :global(h3) {
-    margin-top: 2.5rem;
-    margin-bottom: 0.75rem;
-  }
+    h3 {
+      font-size: clamp(1.25rem, 3vw, 1.75rem);
+      margin-bottom: 2rem;
+      font-family: var(fontBold);
+    }
 
-  .prose :global(ul),
-  .prose :global(ol) {
-    padding-left: 1.5rem;
-    color: var(--color-muted);
+    .prose {
+      h4 {
+        font-size: clamp(1.25rem, 3vw, 1.75rem);
+        font-family: var(fontRegular);
+      }
+
+      p {
+        margin: 1.5rem 0;
+        color: var(--color-muted);
+      }
+
+      img {
+        width: clamp(200px, 40vw, 320px);
+        border-radius: 1rem;
+        margin: 1.5rem auto;
+        display: block;
+      }
+
+      :global(h3) {
+        margin-top: 2.5rem;
+        margin-bottom: 0.75rem;
+      }
+      :global(ul),
+      :global(ol) {
+        padding-left: 1.5rem;
+        color: var(--color-muted);
+      }
+    }
   }
 </style>

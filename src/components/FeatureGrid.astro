@@ -1,4 +1,7 @@
 ---
+import Icon from "@components/Icon/Icon.astro";
+import Spacer from "@components/UI/Spacer.astro";
+
 interface FeatureItem {
   title: string;
   description: string;
@@ -12,74 +15,105 @@ interface Props {
   features: FeatureItem[];
 }
 
-const {
-  eyebrow,
-  title,
-  description,
-  features,
-} = Astro.props as Props;
+const { eyebrow, title, description, features } = Astro.props as Props;
 ---
+
 <section class="section-container">
   <div class="intro">
     {eyebrow && <span class="eyebrow">{eyebrow}</span>}
     <h2>{title}</h2>
     {description && <p>{description}</p>}
   </div>
-  <div class="grid grid-cols-3">
-    {features.map((feature) => (
-      <article class="card">
-        {feature.icon && <span class="icon">{feature.icon}</span>}
-        <h3>{feature.title}</h3>
-        <p>{feature.description}</p>
-      </article>
-    ))}
+  <div class="features">
+    {
+      features.map((feature) => (
+        <article class="feature">
+          <div class="feature__icon">
+            {feature.icon ? (
+              <Icon type={feature.icon as any} />
+            ) : (
+              <span aria-hidden="true" class="feature__fallback">
+                •
+              </span>
+            )}
+          </div>
+          <h3>{feature.title}</h3>
+          <p>{feature.description}</p>
+        </article>
+      ))
+    }
   </div>
+  <Spacer size="2rem" />
 </section>
 
 <style>
   .intro {
-    max-width: 680px;
-    margin: 0 auto 2.5rem;
+    max-width: 480px;
+    margin: 0 auto clamp(2rem, 6vw, 4rem);
     text-align: center;
+  }
+
+  .intro h2 {
+    margin-bottom: 1.5rem;
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-family: var(fontBold);
+  }
+
+  .intro h2 {
+    margin: 1.5rem 0;
+    font-size: clamp(2rem, 4vw, 2.75rem);
   }
 
   .intro p {
     color: var(--color-muted);
+    margin: 0;
   }
 
-  .eyebrow {
-    display: inline-flex;
+  .features {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2.5rem, 6vw, 4rem);
     align-items: center;
-    gap: 0.5rem;
-    font-weight: 600;
-    font-size: 0.85rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--color-primary);
   }
 
-  .icon {
-    display: inline-flex;
+  .feature {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.25rem;
+    max-width: 420px;
+  }
+
+  .feature__icon {
+    width: 5rem;
+    height: 5rem;
+    background: #000;
+    display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  }
+
+  .feature__icon :global(svg) {
     width: 3rem;
     height: 3rem;
-    border-radius: 0.9rem;
-    background: rgba(59, 91, 253, 0.1);
-    color: var(--color-primary);
-    font-size: 1.5rem;
-    margin-bottom: 1.25rem;
+    fill: var(--color-primary, #ff0000);
   }
 
-  @media (max-width: 900px) {
-    .grid.grid-cols-3 {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+  .feature__fallback {
+    font-size: 2rem;
+    color: var(--color-primary, #ff0000);
   }
 
-  @media (max-width: 600px) {
-    .grid.grid-cols-3 {
-      grid-template-columns: repeat(1, minmax(0, 1fr));
-    }
+  .feature h3 {
+    margin: 0;
+    font-size: 1.35rem;
+  }
+
+  .feature p {
+    margin: 0;
+    color: var(--color-muted);
+    line-height: 1.6;
   }
 </style>

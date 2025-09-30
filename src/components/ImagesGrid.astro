@@ -1,0 +1,74 @@
+---
+interface ImageItem {
+  src: string;
+  alt?: string;
+  caption?: string;
+}
+
+interface Props {
+  images: ImageItem[];
+}
+
+const { images } = Astro.props as Props;
+---
+
+<section class="images-grid">
+  <div class="images-grid__wrapper">
+    {
+      images.map((image) => (
+        <figure class="images-grid__item">
+          <img src={image.src} alt={image.alt ?? ""} loading="lazy" />
+          {image.caption && <figcaption>{image.caption}</figcaption>}
+        </figure>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .images-grid {
+    padding: clamp(2rem, 6vw, 3rem) 1.25rem;
+  }
+
+  .images-grid__wrapper {
+    margin: 0 auto;
+    width: min(540px, 100%);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(0.75rem, 3vw, 1.5rem);
+  }
+
+  .images-grid__item {
+    margin: 0;
+    overflow: hidden;
+    border-radius: 1rem;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .images-grid__item img {
+    width: 100%;
+    height: clamp(120px, 25vw, 160px);
+    object-fit: cover;
+    display: block;
+    border-radius: inherit;
+  }
+
+  .images-grid__item figcaption {
+    font-size: 0.8rem;
+    text-align: center;
+    color: var(--color-text, #111);
+  }
+
+  @media (max-width: 520px) {
+    .images-grid__wrapper {
+      gap: 0.75rem;
+    }
+
+    .images-grid__item img {
+      height: clamp(110px, 35vw, 140px);
+    }
+  }
+</style>

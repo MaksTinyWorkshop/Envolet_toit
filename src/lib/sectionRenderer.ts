@@ -2,16 +2,21 @@ import type { CollectionEntry } from 'astro:content';
 
 import CtaBanner from '@components/CtaBanner.astro';
 import FeatureGrid from '@components/FeatureGrid.astro';
-import HeroSection from '@components/HeroSection.astro';
+import HeroSection from '@components/Home/HeroSection.astro';
 import MarkdownSection from '@components/MarkdownSection.astro';
-import TestimonialSection from '@components/TestimonialSection.astro';
+import FAQSection from '@components/FAQSection.astro';
+import ParcoursSection from '@components/ParcoursSection.astro';
+import ImagesGrid from '@components/ImagesGrid.astro';
+
 
 const componentMap = {
   hero: HeroSection,
   'feature-grid': FeatureGrid,
-  testimonials: TestimonialSection,
+  parcours: ParcoursSection,
+  faq: FAQSection,
   markdown: MarkdownSection,
   cta: CtaBanner,
+  images: ImagesGrid,
 } as const;
 
 type SectionComponentName = keyof typeof componentMap;
@@ -40,6 +45,7 @@ export async function resolveSection(
           content: section.data.content,
           primaryCta: section.data.primaryCta,
           secondaryCta: section.data.secondaryCta,
+          tertiaryCta: section.data.tertiaryCta,
           image: section.data.image,
         },
       };
@@ -53,13 +59,23 @@ export async function resolveSection(
           features: section.data.features,
         },
       };
-    case 'testimonials':
+    case 'parcours':
+      return {
+        Component,
+        props: {
+          title: section.data.title,
+          schema: section.data.schema,
+          description: section.data.description,
+          steps: section.data.steps,
+        },
+      };
+    case 'faq':
       return {
         Component,
         props: {
           title: section.data.title,
           description: section.data.description,
-          testimonials: section.data.testimonials,
+          questions: section.data.questions,
         },
       };
     case 'markdown': {
@@ -68,6 +84,8 @@ export async function resolveSection(
         Component,
         props: {
           title: section.data.title,
+          description: section.data.description,
+          images: section.data.images,
           Content,
         },
       };
@@ -79,8 +97,16 @@ export async function resolveSection(
           eyebrow: section.data.eyebrow,
           title: section.data.title,
           description: section.data.description,
+          content: section.data.content,
           primaryCta: section.data.primaryCta,
           secondaryCta: section.data.secondaryCta,
+        },
+      };
+    case 'images':
+      return {
+        Component,
+        props: {
+          images: section.data.images,
         },
       };
     default:

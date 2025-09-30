@@ -1,8 +1,7 @@
 ---
-import "../styles/global.css";
-import SiteHeader from "@components/SiteHeader.astro";
-import SiteFooter from "@components/SiteFooter.astro";
-
+import SiteFooter from "@components/UI/SiteFooter.astro";
+import Navbar from "@components/UI/Navbar/Navbar.astro";
+import CallbackModal from "@components/CTA/CallbackModal.astro";
 export interface NavigationLink {
   label: string;
   href: string;
@@ -11,46 +10,62 @@ export interface NavigationLink {
 interface Props {
   title: string;
   description?: string;
-  navigation?: NavigationLink[];
 }
 
 const {
   title,
   description = "Une vitrine moderne et rapide construite avec Astro.",
-  navigation = [
-    { label: "Accueil", href: "/" },
-    { label: "Services", href: "/services" },
-    { label: "À propos", href: "/a-propos" },
-    { label: "Contact", href: "/contact" },
-  ],
 } = Astro.props as Props;
 ---
 
 <!doctype html>
-<html lang="fr">
+<html lang="fr" data-theme="mindleaf">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <script
-      type="module"
-      src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"
-    ></script>
-    <script
-      nomodule
-      src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"
-    ></script>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css"
-    />
   </head>
   <body>
-    <SiteHeader navigation={navigation} />
+    <Navbar />
     <main>
       <slot />
     </main>
     <SiteFooter />
+    <CallbackModal />
   </body>
 </html>
+
+<style lang="scss" is:global>
+  @use "webcoreui/styles" as *;
+  @include setup(
+    (
+      fontRegular: "/fonts/Montserrat.ttf",
+      fontBold: "/fonts/Vintera.ttf",
+      theme: "light",
+    )
+  );
+
+  html,
+  body {
+    min-height: 100%;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  main {
+    flex: 1 0 auto;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(fontBold), serif;
+  }
+</style>

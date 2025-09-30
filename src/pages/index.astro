@@ -4,11 +4,23 @@ import { getEntry } from "astro:content";
 import { resolveSection } from "@lib/sectionRenderer";
 
 const page = await getEntry("pages", "home");
-const sections = await Promise.all(
-  page.data.sections.map(async ({ slug }) => await getEntry("sections", slug))
+const sectionEntries = await Promise.all(
+  page.data.sections.map(async ({ slug }) => {
+    const entry = await getEntry("sections", slug);
+
+    if (!entry) {
+      console.warn(`Section manquante: sections/${slug}`);
+    }
+
+    return entry;
+  })
 );
 
-const resolvedSections = await Promise.all(sections.map(resolveSection));
+const resolvedSections = await Promise.all(
+  sectionEntries
+    .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
+    .map(resolveSection)
+);
 ---
 
 <BaseLayout title={page.data.title} description={page.data.description}>

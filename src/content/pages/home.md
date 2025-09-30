@@ -1,11 +1,12 @@
 ---
-title: "Studio Horizon — vitrines Astro prêtes à l'emploi"
+title: "Envolet' Toit — Page d'accueil"
 description: "Un exemple de page d'accueil construite à partir de sections markdown."
 draft: false
 sections:
   - slug: hero-accueil
-  - slug: propos-studio
-  - slug: services-studio
-  - slug: temoignages-clients
+  - slug: services-envolet
+  - slug: fonctionnement-envolet
+  - slug: foire-aux-questions
   - slug: cta-contact
+  - slug: galerie-realisations
 ---

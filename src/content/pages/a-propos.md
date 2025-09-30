@@ -1,7 +1,7 @@
 ---
-title: "À propos"
-description: "Rencontrez l'équipe derrière ce modèle de vitrine Astro."
+title: "Envolet'toit | À propos"
+description: "Rencontrez l'équipe."
 sections:
-  - slug: propos-studio
-  - slug: equipe-studio
+  - slug: whoweare-entreprise
+  - slug: whoweare-equipe
 ---
