@@ -8,8 +8,10 @@ export default defineConfig({
   site: 'https://www.yoursite.tld',
   scopedStyleStrategy: 'where',
   integrations: [tailwind(), mdx(), webcore()],
-  // Rajout de cette ligne pour GithubPages
+  // Rajout de ces deux lignes pour GithubPages
   output: 'static',
+  base: '/Envolet_toit/',
+  //
   markdown: {
     syntaxHighlight: 'prism',
   },
