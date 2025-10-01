@@ -8,6 +8,8 @@ export default defineConfig({
   site: 'https://www.yoursite.tld',
   scopedStyleStrategy: 'where',
   integrations: [tailwind(), mdx(), webcore()],
+  // Rajout de cette ligne pour GithubPages
+  output: 'static',
   markdown: {
     syntaxHighlight: 'prism',
   },

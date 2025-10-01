@@ -1,6 +1,6 @@
 const MODAL_ROOT_SELECTOR = "[data-callback-modal-root]";
 const TRIGGER_SELECTOR = "[data-callback-trigger]";
-const CALLBACK_ENDPOINT = import.meta.env.PUBLIC_CALLBACK_ENDPOINT ?? "/api/callback";
+const CALLBACK_ENDPOINT = import.meta.env.PUBLIC_CALLBACK_ENDPOINT;
 
 interface CallbackPayload {
   name: string;
@@ -38,6 +38,16 @@ const submitCallbackForm = async (
     name: (formData.get("name") ?? "").toString().trim(),
     phone: (formData.get("phone") ?? "").toString().trim(),
   };
+
+  if (!CALLBACK_ENDPOINT) {
+    console.error('PUBLIC_CALLBACK_ENDPOINT is not set; cannot submit callback form.');
+    errorMessage?.removeAttribute("hidden");
+    if (submitButton) {
+      submitButton.disabled = false;
+      delete submitButton.dataset.loading;
+    }
+    return;
+  }
 
   try {
     const response = await fetch(CALLBACK_ENDPOINT, {
