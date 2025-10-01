@@ -1,6 +1,4 @@
 import type { APIRoute } from "astro";
-import nodemailer from "nodemailer";
-
 export const prerender = false;
 
 interface Payload {
@@ -8,37 +6,27 @@ interface Payload {
   phone?: string;
 }
 
-const mailTo = process.env.MAIL_TO ?? "test@test.com";
-const mailFrom = process.env.MAIL_FROM ?? "no-reply@envolet-toit.test";
-
-function createTransport() {
-  if (process.env.SMTP_HOST) {
-    return nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT ?? 587),
-      secure: process.env.SMTP_SECURE === "true",
-      auth:
-        process.env.SMTP_USER && process.env.SMTP_PASS
-          ? {
-              user: process.env.SMTP_USER,
-              pass: process.env.SMTP_PASS,
-            }
-          : undefined,
-    });
-  }
-
-  return nodemailer.createTransport({
-    jsonTransport: true,
-  });
-}
-
-const transporter = createTransport();
+const googleScriptUrl = import.meta.env.GOOGLE_APPS_SCRIPT_URL ?? process.env.GOOGLE_APPS_SCRIPT_URL;
 
 export const POST: APIRoute = async ({ request }) => {
   try {
+    if (!googleScriptUrl) {
+      console.error("Missing GOOGLE_APPS_SCRIPT_URL environment variable");
+      return new Response(
+        JSON.stringify({
+          message: "Service indisponible. Contactez l'administrateur.",
+        }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
     const body: Payload = await request.json();
     const name = body.name?.trim();
     const phone = body.phone?.trim();
+  
 
     if (!name || !phone) {
       return new Response(
@@ -50,13 +38,30 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    await transporter.sendMail({
-      from: mailFrom,
-      to: mailTo,
-      subject: "Nouvelle demande de rappel",
-      text: `Nom: ${name}\nTéléphone: ${phone}`,
-      html: `<p><strong>Nom:</strong> ${name}</p><p><strong>Téléphone:</strong> ${phone}</p>`,
+    const searchParams = new URLSearchParams({
+      name,
+      phone,
+      timestamp: new Date().toISOString(),
     });
+
+    const scriptResponse = await fetch(googleScriptUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        phone,
+        timestamp: new Date().toISOString(),
+      }),
+    });
+
+    if (!scriptResponse.ok) {
+      const text = await scriptResponse.text();
+      throw new Error(
+        `Google Apps Script error (${scriptResponse.status}): ${text || "Unknown error"}`
+      );
+    }
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,

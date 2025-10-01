@@ -50,7 +50,7 @@ import styles from "./ctaButton.module.scss";
         name="phone"
         type="tel"
         required
-        pattern="[0-9+()\\s-]{6,}"
+        pattern="^(?:0[1-9](?:(?:[ .]|-)?[0-9]{2}){4})$"
         placeholder="Téléphone*"
       />
 
@@ -77,6 +77,6 @@ import styles from "./ctaButton.module.scss";
   </div>
 </div>
 
-<script type="module">
+<script type="module" is:inline>
   import("/src/components/CTA/ctaButton.client.ts");
 </script>

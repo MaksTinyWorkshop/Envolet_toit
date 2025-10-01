@@ -18,44 +18,57 @@ interface Props {
 
 const { eyebrow, title, description, content, primaryCta, secondaryCta } =
   Astro.props as Props;
+const primaryLabel = primaryCta?.label ?? "ÊTRE RAPPELÉ";
 ---
 
-<section class="cta">
-  <div class="section-container content">
-    <div>
+<section class="section-container">
+  <div class="content">
+    <div class="cta">
       {eyebrow && <span class="eyebrow">{eyebrow}</span>}
       <h2>{title}</h2>
       {description && <p set:html={description} />}
       {content && <p class="bold" set:html={content} />}
     </div>
-    <CtaButton />
+    <CtaButton label={primaryLabel} />
+    {secondaryCta && (
+      <a class="secondary-link" href={secondaryCta.href}>
+        {secondaryCta.label}
+      </a>
+    )}
     <Spacer size=".5rem" />
   </div>
 </section>
 
-<style>
-  .cta {
-    .content {
-      background: var(--color-primary);
-      color: var(--color-background);
-      padding: clamp(1rem, 2vw, 4.5rem);
+<style lang="scss">
+  .content {
+    background: var(--color-primary);
+    color: var(--color-background);
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    box-shadow: var(--shadow-lg);
+
+    .cta {
+      max-width: 700px;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
-      box-shadow: 0 18px 45px -22px var(--transp-primary);
+      align-items: center;
 
       h2 {
-        font-size: clamp(0.5rem, 4vw, 2.5rem);
+        font-size: var(--step-1);
+        line-height: 1.3;
         margin-bottom: 0.5rem;
         font-weight: 700;
         text-align: center;
       }
       p {
         color: var(--color-background);
-        font-size: clamp(0.5rem, 3.5vw, 2.5rem);
+        font-size: var(--step--1);
         text-align: center;
-        margin: 1rem 0 0;
-        max-width: 520px;
+        margin: var(--space-2) 0 0;
+        line-height: 1.2;
         white-space: pre-line;
 
         &.bold {
@@ -63,15 +76,30 @@ const { eyebrow, title, description, content, primaryCta, secondaryCta } =
         }
       }
     }
+  }
 
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-weight: 600;
-      font-size: 0.85rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: var(--step--1);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .secondary-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    color: var(--color-background);
+    font-size: var(--step--1);
+    text-decoration: none;
+    transition: text-decoration 0.2s ease;
+
+    &:hover {
+      text-decoration: underline;
     }
   }
 </style>

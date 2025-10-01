@@ -4,6 +4,10 @@ import { getEntry } from "astro:content";
 import { resolveSection } from "@lib/sectionRenderer";
 
 const page = await getEntry("pages", "home");
+
+if (!page) {
+  throw new Error('Contenu "home" introuvable dans la collection pages.');
+}
 const sectionEntries = await Promise.all(
   page.data.sections.map(async ({ slug }) => {
     const entry = await getEntry("sections", slug);

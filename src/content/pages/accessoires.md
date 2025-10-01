@@ -1,7 +1,9 @@
 ---
 title: "Envolet'toit | Accessoires"
-description: "Expliquez votre projet et obtenez une réponse sous 24 heures."
+description: "Les accessoires VELUX en fonction de votre matériel"
 sections:
+  - slug: catalogue-accessoires
+  - slug: services-envolet
   - slug: cta-contact
-  - slug: equipe-studio
+  - slug: galerie-realisations
 ---

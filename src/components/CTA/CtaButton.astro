@@ -1,5 +1,11 @@
 ---
 import styles from "./ctaButton.module.scss";
+
+interface Props {
+  label?: string;
+}
+
+const { label = "ÊTRE RAPPELÉ" } = Astro.props as Props;
 ---
 
 <div class={styles.container}>
@@ -12,6 +18,6 @@ import styles from "./ctaButton.module.scss";
         ></path>
       </svg>
     </span>
-    ÊTRE RAPPELÉ
+    {label}
   </button>
 </div>

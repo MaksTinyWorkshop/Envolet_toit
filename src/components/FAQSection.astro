@@ -22,7 +22,7 @@ import Spacer from "./UI/Spacer.astro";
     {description && <p>{description}</p>}
   </div>
   <Accordion
-    items={questions.map(({ question, answer, role }) => ({
+    items={questions.map(({ question, answer }) => ({
       title: question,
       content: answer,
     }))}
@@ -33,35 +33,25 @@ import Spacer from "./UI/Spacer.astro";
 </section>
 
 <style>
-  .intro {
-    max-width: 640px;
-    margin: 0 auto 2.5rem;
-    text-align: center;
-  }
-
-  .intro h2 {
-    font-size: clamp(2rem, 4vw, 2.75rem);
-    margin-bottom: 0.5rem;
-    color: var(--color-primary);
-  }
-
-  .intro p {
-    color: var(--color-muted);
-  }
-
   .faq-accordion {
     max-width: 90vw;
     margin: 0 auto;
 
     button {
       font-family: var(fontBold);
-      font-size: clamp(0.5rem, 2vw, 1.125rem);
+      font-size: var(--step-0);
       font-weight: 600;
     }
 
     li {
       font-family: var(fontRegular);
-      font-size: clamp(1rem, 2vw, 1.125rem);
+      font-size: var(--step-0);
+    }
+  }
+
+  @media (min-width: 960px) {
+    .faq-accordion {
+      max-width: 600px;
     }
   }
 </style>

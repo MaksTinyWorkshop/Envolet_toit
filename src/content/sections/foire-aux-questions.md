@@ -1,6 +1,6 @@
 ---
 component: faq
-title: "Questions fréquentes"
+title: "Questions frequentes"
 description: ""
 questions:
   - question: "Faut-il une autorisation pour poser un Velux ?"

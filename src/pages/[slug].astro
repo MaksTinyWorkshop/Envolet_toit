@@ -24,7 +24,11 @@ const sections = await Promise.all(
   page.data.sections.map(async ({ slug }) => await getEntry("sections", slug))
 );
 
-const resolvedSections = await Promise.all(sections.map(resolveSection));
+const resolvedSections = await Promise.all(
+  (sections as CollectionEntry<'sections'>[]).map((section) =>
+    resolveSection(section)
+  )
+);
 ---
 
 <BaseLayout title={page.data.title} description={page.data.description}>

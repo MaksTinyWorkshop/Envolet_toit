@@ -27,7 +27,7 @@ const { images } = Astro.props as Props;
 
 <style>
   .images-grid {
-    padding: clamp(2rem, 6vw, 3rem) 1.25rem;
+    padding: var(--space-3);
   }
 
   .images-grid__wrapper {
@@ -63,6 +63,9 @@ const { images } = Astro.props as Props;
   }
 
   @media (max-width: 520px) {
+    .images-grid {
+      padding: var(--space-2);
+    }
     .images-grid__wrapper {
       gap: 0.75rem;
     }

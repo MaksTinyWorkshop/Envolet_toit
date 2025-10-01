@@ -106,6 +106,38 @@ const imagesSchema = z.object({
     .min(1),
 });
 
+const catalogueItemSchema = z.object({
+  title: z.string(),
+  reference: z.string().optional(),
+  description: z.string().optional(),
+  price: z.string().optional(),
+  image: z
+    .object({
+      src: z.string(),
+      alt: z.string().optional(),
+    })
+    .optional(),
+  cta: callToActionSchema.optional(),
+});
+
+const catalogueCategorySchema = z.object({
+  id: z.string(),
+  label: z.string(),
+  description: z.string().optional(),
+  note: z.string().optional(),
+  items: z.array(catalogueItemSchema).min(1),
+});
+
+const catalogueSchema = z.object({
+  component: z.literal('catalogue'),
+  eyebrow: z.string().optional(),
+  title: z.string().optional(),
+  intro: z.string().optional(),
+  categories: z.array(catalogueCategorySchema).min(1),
+  defaultCategory: z.string().optional(),
+  footnote: z.string().optional(),
+});
+
 
 const sectionSchema = z.discriminatedUnion('component', [
   heroSchema,
@@ -114,7 +146,8 @@ const sectionSchema = z.discriminatedUnion('component', [
   faqSchema,
   markdownSchema,
   ctaSchema,
-  imagesSchema
+  imagesSchema,
+  catalogueSchema,
 ]);
 
 const sections = defineCollection({

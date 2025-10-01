@@ -1,5 +1,6 @@
 import type { CollectionEntry } from 'astro:content';
 
+import CatalogueSection from '@components/Catalogue/CatalogueSection.astro';
 import CtaBanner from '@components/CtaBanner.astro';
 import FeatureGrid from '@components/FeatureGrid.astro';
 import HeroSection from '@components/Home/HeroSection.astro';
@@ -17,13 +18,14 @@ const componentMap = {
   markdown: MarkdownSection,
   cta: CtaBanner,
   images: ImagesGrid,
+  catalogue: CatalogueSection,
 } as const;
 
 type SectionComponentName = keyof typeof componentMap;
 
 type ResolvedSection = {
   Component: (typeof componentMap)[SectionComponentName];
-  props: Record<string, unknown>;
+  props: any;
 };
 
 export async function resolveSection(
@@ -107,6 +109,18 @@ export async function resolveSection(
         Component,
         props: {
           images: section.data.images,
+        },
+      };
+    case 'catalogue':
+      return {
+        Component,
+        props: {
+          eyebrow: section.data.eyebrow,
+          title: section.data.title,
+          intro: section.data.intro,
+          categories: section.data.categories,
+          defaultCategory: section.data.defaultCategory,
+          footnote: section.data.footnote,
         },
       };
     default:

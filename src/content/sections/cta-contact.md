@@ -1,7 +1,7 @@
 ---
 component: cta
 eyebrow: ""
-title: "Vous avez des questions sur notre activité de pose d'accessoires et entretien de fenêtre de toit VELUX ?"
+title: "Des questions sur notre activité de pose d'accessoires et entretien de fenêtre de toit Velux?"
 description: |-
   Nous revenons vers vous rapidement.
   Vous pouvez aussi nous contacter par mail ou téléphone
