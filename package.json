@@ -7,7 +7,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "lint": "astro check"
+    "lint": "astro check",
+    "deploy": "npm run build && git branch -D gh-pages || true && git subtree split --prefix dist -b gh-pages && git push -f origin gh-pages && git branch -D gh-pages"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.6",
