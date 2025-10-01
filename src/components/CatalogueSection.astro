@@ -1,0 +1,459 @@
+---
+import { createMarkdownProcessor } from "@astrojs/markdown-remark";
+import { Tabs } from "webcoreui/astro";
+
+interface CatalogueLink {
+  label: string;
+  href: string;
+}
+
+interface CatalogueImage {
+  src: string;
+  alt?: string;
+}
+
+interface CatalogueItem {
+  title: string;
+  reference?: string;
+  description?: string;
+  price?: string;
+  image?: CatalogueImage;
+  cta?: CatalogueLink;
+}
+
+interface CatalogueCategory {
+  id: string;
+  label: string;
+  description?: string;
+  note?: string;
+  items: CatalogueItem[];
+}
+
+type ProcessedItem = CatalogueItem & {
+  descriptionHtml: string | null;
+};
+
+type ProcessedCategory = CatalogueCategory & {
+  descriptionHtml: string | null;
+  noteHtml: string | null;
+  items: ProcessedItem[];
+};
+
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  categories?: CatalogueCategory[];
+  defaultCategory?: string;
+  footnote?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  intro,
+  categories = [],
+  defaultCategory,
+  footnote,
+} = Astro.props as Props;
+
+const validCategories = categories.filter(
+  (category) =>
+    category &&
+    category.id &&
+    Array.isArray(category.items) &&
+    category.items.length > 0
+);
+
+if (validCategories.length === 0) {
+  throw new Error(
+    "CatalogueSection nécessite au moins une catégorie contenant des produits."
+  );
+}
+
+const firstCategoryId = validCategories[0]?.id;
+const initialCategoryId =
+  validCategories.find((category) => category.id === defaultCategory)?.id ??
+  firstCategoryId;
+
+const markdownProcessor = await createMarkdownProcessor();
+
+const renderMarkdown = async (value?: string | null) => {
+  if (!value) return null;
+  const { code } = await markdownProcessor.render(value);
+  return code;
+};
+
+const processedCategories: ProcessedCategory[] = await Promise.all(
+  validCategories.map(async (category) => ({
+    ...category,
+    descriptionHtml: await renderMarkdown(category.description),
+    noteHtml: await renderMarkdown(category.note),
+    items: await Promise.all(
+      category.items.map(async (item) => ({
+        ...item,
+        descriptionHtml: await renderMarkdown(item.description),
+      }))
+    ),
+  }))
+);
+
+const introHtml = await renderMarkdown(intro);
+const footnoteHtml = await renderMarkdown(footnote);
+const tabItems = processedCategories.map((category) => ({
+  label: category.label,
+  value: category.id,
+  active: category.id === initialCategoryId,
+}));
+---
+
+<section class="section-container catalogue">
+  <div class="catalogue__header">
+    {eyebrow && <span class="catalogue__eyebrow">{eyebrow}</span>}
+    {title && <h2>{title}</h2>}
+    {introHtml && <div class="catalogue__intro" set:html={introHtml} />}
+  </div>
+
+  <Tabs items={tabItems} even={true} className="catalogue__tabs">
+    {
+      processedCategories.map((category: ProcessedCategory) => {
+        const isActive = category.id === initialCategoryId;
+
+        return (
+          <section
+            data-tab={category.id}
+            data-active={isActive ? "true" : "false"}
+            class={`catalogue__panel ${isActive ? "is-active" : ""}`}
+          >
+            {category.descriptionHtml && (
+              <div
+                class="catalogue__panel-description"
+                set:html={category.descriptionHtml}
+              />
+            )}
+
+            <div class="catalogue__items">
+              {category.items.map((item: ProcessedItem) => (
+                <div class="catalogue-card">
+                  {item.image && (
+                    <figure class="catalogue-card__media">
+                      <img
+                        src={item.image.src}
+                        alt={item.image.alt ?? ""}
+                        loading="lazy"
+                      />
+                    </figure>
+                  )}
+
+                  <div class="card__content">
+                    <header class="catalogue-card__header">
+                      <h3>{item.title}</h3>
+                      {item.reference && (
+                        <p class="catalogue-card__reference">
+                          {item.reference}
+                        </p>
+                      )}
+                    </header>
+
+                    {item.descriptionHtml && (
+                      <div
+                        class="catalogue-card__description"
+                        set:html={item.descriptionHtml}
+                      />
+                    )}
+
+                    {item.price && (
+                      <p class="catalogue-card__price">{item.price}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {category.noteHtml && (
+              <div class="catalogue__note" set:html={category.noteHtml} />
+            )}
+          </section>
+        );
+      })
+    }
+  </Tabs>
+
+  {footnoteHtml && <div class="catalogue__footnote" set:html={footnoteHtml} />}
+</section>
+
+<style>
+  .catalogue {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2rem, 5vw, 3.5rem);
+    padding: clamp(2rem, 5vw, 4rem) 0;
+
+    .catalogue__header {
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .catalogue__eyebrow {
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-primary, #ff0000);
+    }
+
+    .catalogue__header h2 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      margin: 0;
+    }
+
+    .catalogue__intro :global(p) {
+      margin: 0;
+      color: var(--color-muted, #555);
+    }
+  }
+
+  :global(.catalogue__tabs) {
+    width: 100%;
+  }
+
+  :global(.catalogue__tabs > div:first-child > div) {
+    display: flex;
+    flex-wrap: nowrap;
+    border: 0 !important;
+    padding: 0;
+    background: #000;
+    width: 100%;
+  }
+
+  :global(.catalogue__tabs button) {
+    appearance: none;
+    background: transparent;
+    color: var(--color-nav, #ffffff) !important;
+    font-size: 1rem;
+    font-family: Bold, "Montserrat", sans-serif;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease;
+    flex: 1;
+  }
+
+  :global(.catalogue__tabs button[data-active="true"]) {
+    background: var(--color-primary, #ff0000);
+    color: var(--color-nav, #ffffff);
+  }
+
+  :global(.catalogue__tabs [data-tab][data-active="true"]) {
+    display: grid;
+    gap: clamp(2rem, 5vw, 3rem);
+  }
+
+  .catalogue__panel-description :global(p) {
+    margin: 0 0 1.5rem;
+    color: var(--color-muted, #555);
+    text-align: center;
+  }
+
+  .catalogue__items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .catalogue-card {
+    position: relative;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 1rem;
+    overflow: hidden;
+    background: var(--color-background, #ffffff);
+    box-shadow: 0 20px 45px -28px rgba(0, 0, 0, 0.35);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    perspective: 1000px;
+    box-shadow: 0 0 0 5px #ffffff80;
+    transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 16px rgba(255, 255, 255, 0.2);
+    }
+
+    &:hover .card__content {
+      transform: rotateX(0deg);
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .card__content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      background-color: #f2f2f2;
+      transform: rotateX(-90deg);
+      transform-origin: bottom;
+      transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+  }
+
+  .catalogue-card__media {
+    margin: 0;
+    background: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  .catalogue-card__media img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .catalogue-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+    flex: 1 1 auto;
+  }
+
+  .catalogue-card__header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  .catalogue-card__reference {
+    margin: 0.35rem 0 0;
+    font-size: 0.9rem;
+    color: var(--color-muted, #555);
+  }
+
+  .catalogue-card__description :global(p) {
+    margin: 0;
+    line-height: 1.5;
+    color: var(--color-muted, #555);
+  }
+
+  .catalogue-card__price {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: auto 0 0;
+    color: #111;
+  }
+
+  .catalogue-card__cta {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    background: var(--color-primary, #ff0000);
+    color: var(--color-background, #ffffff);
+    font-weight: 600;
+    text-transform: uppercase;
+    border-radius: 999px;
+    transition:
+      transform 0.2s ease,
+      background 0.2s ease;
+  }
+
+  .catalogue-card__cta:hover {
+    transform: translateY(-2px);
+    background: #c40000;
+  }
+
+  .catalogue__note :global(p) {
+    margin: 1.5rem 0 0;
+    color: var(--color-muted, #555);
+    text-align: center;
+  }
+
+  .catalogue__footnote {
+    text-align: center;
+    color: var(--color-muted, #555);
+    font-size: 0.9rem;
+  }
+
+  .catalogue__footnote :global(p) {
+    margin: 0;
+  }
+
+  .card {
+    position: relative;
+    width: 300px;
+    height: 200px;
+    background-color: #f2f2f2;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    perspective: 1000px;
+    box-shadow: 0 0 0 5px #ffffff80;
+    transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(255, 255, 255, 0.2);
+  }
+
+  .card__content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #f2f2f2;
+    transform: rotateX(-90deg);
+    transform-origin: bottom;
+    transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .card:hover .card__content {
+    transform: rotateX(0deg);
+  }
+
+  .card__title {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+    font-weight: 700;
+  }
+
+  .card:hover img {
+    scale: 0;
+  }
+
+  .card__description {
+    margin: 10px 0 0;
+    font-size: 14px;
+    color: #777;
+    line-height: 1.4;
+  }
+</style>
