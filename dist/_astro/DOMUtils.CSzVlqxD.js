@@ -1,1 +1,0 @@
-const d=(e,t)=>t?document?.querySelectorAll(e):document?.querySelector(e),s=(e,t,n,r)=>{if(r){document.querySelectorAll(e)?.forEach(o=>{o.addEventListener(t,n)});return}if(typeof e=="string"){d(e)?.addEventListener(t,n);return}e?.addEventListener(t,n)};export{d as g,s as o};
