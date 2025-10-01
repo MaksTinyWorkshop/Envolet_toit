@@ -1,5 +1,6 @@
 const MODAL_ROOT_SELECTOR = "[data-callback-modal-root]";
 const TRIGGER_SELECTOR = "[data-callback-trigger]";
+const CALLBACK_ENDPOINT = import.meta.env.PUBLIC_CALLBACK_ENDPOINT ?? "/api/callback";
 
 interface CallbackPayload {
   name: string;
@@ -39,7 +40,7 @@ const submitCallbackForm = async (
   };
 
   try {
-    const response = await fetch("/api/callback", {
+    const response = await fetch(CALLBACK_ENDPOINT, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
