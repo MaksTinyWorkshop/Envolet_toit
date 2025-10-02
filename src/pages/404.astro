@@ -1,13 +1,27 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
+
+const baseHref = import.meta.env.BASE_URL;
+const withTrailingSlash = (value) =>
+  value.endsWith('/') ? value : `${value}/`;
+const baseWithSlash = withTrailingSlash(baseHref);
+const resolveHref = (path) => {
+  if (path === '/' || path === '') {
+    return baseWithSlash;
+  }
+  const normalized = path.startsWith('/') ? path.slice(1) : path;
+  return `${baseWithSlash}${normalized}`;
+};
 ---
 <BaseLayout title="Page introuvable" description="La page que vous cherchez n'existe pas encore.">
   <section class="section-container">
     <h1>Page introuvable</h1>
     <p>Cette page n'existe pas ou a été déplacée. Revenez à l'accueil pour poursuivre votre visite.</p>
     <div class="button-group">
-      <a class="button primary" href="/">Retour à l'accueil</a>
-      <a class="button secondary" href="/contact">Nous contacter</a>
+      <a class="button primary" href={resolveHref('/')}>Retour à l'accueil</a>
+      <a class="button secondary" href={resolveHref('/contact')}>
+        Nous contacter
+      </a>
     </div>
   </section>
 </BaseLayout>

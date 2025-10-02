@@ -5,7 +5,8 @@ import { webcore } from 'webcoreui/integration'
 
 
 export default defineConfig({
-  site: 'https://makstinyworkshop.github.io/Envolet_toit/',
+  site: 'https://makstinyworkshop.github.io',
+  base: '/Envolet_toit',
   scopedStyleStrategy: 'where',
   integrations: [tailwind(), mdx(), webcore()],
   // Rajout de ces deux lignes pour GithubPages

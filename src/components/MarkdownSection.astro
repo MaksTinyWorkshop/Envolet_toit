@@ -17,7 +17,30 @@ interface Props {
   Content: MarkdownRender["Content"];
 }
 
+const baseHref = import.meta.env.BASE_URL;
+const withTrailingSlash = (value) =>
+  value.endsWith("/") ? value : `${value}/`;
+const baseWithSlash = withTrailingSlash(baseHref);
+const isExternal = (path) => /^(?:[a-z+]+:)?\/\//i.test(path);
+const resolveAsset = (path) => {
+  if (!path || path === "") {
+    return path;
+  }
+  if (isExternal(path) || path.startsWith("data:")) {
+    return path;
+  }
+  if (path === "/") {
+    return baseWithSlash;
+  }
+  const normalized = path.startsWith("/") ? path.slice(1) : path;
+  return `${baseWithSlash}${normalized}`;
+};
+
 const { title, description, images, Content } = Astro.props as Props;
+const resolvedImages = images?.map((image) => ({
+  ...image,
+  src: resolveAsset(image.src),
+}));
 ---
 
 {
@@ -25,9 +48,9 @@ const { title, description, images, Content } = Astro.props as Props;
     <section class="section-container markdown">
       {title && <h1>{title}</h1>}
 
-      {images && images.length > 0 && (
+      {resolvedImages && resolvedImages.length > 0 && (
         <div class="image-gallery">
-          {images.map((image) => (
+          {resolvedImages.map((image) => (
             <figure>
               <img src={image.src} alt={image.alt ?? ""} />
               {image.caption && <figcaption>{image.caption}</figcaption>}

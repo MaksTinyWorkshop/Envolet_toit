@@ -20,6 +20,25 @@ interface Props {
   };
 }
 
+const baseHref = import.meta.env.BASE_URL;
+const withTrailingSlash = (value) =>
+  value.endsWith("/") ? value : `${value}/`;
+const baseWithSlash = withTrailingSlash(baseHref);
+const isExternal = (path) => /^(?:[a-z+]+:)?\/\//i.test(path);
+const resolveUrl = (path) => {
+  if (!path || path === "") {
+    return baseWithSlash;
+  }
+  if (isExternal(path) || path.startsWith("#")) {
+    return path;
+  }
+  if (path === "/") {
+    return baseWithSlash;
+  }
+  const normalized = path.startsWith("/") ? path.slice(1) : path;
+  return `${baseWithSlash}${normalized}`;
+};
+
 const {
   eyebrow,
   title,
@@ -30,9 +49,12 @@ const {
   image,
 } = Astro.props as Props;
 
-const ctaCards = [primaryCta, secondaryCta, tertiaryCta].filter(
+const ctaCards = ([primaryCta, secondaryCta, tertiaryCta].filter(
   Boolean
-) as CallToAction[];
+) as CallToAction[]).map((cta) => ({
+  ...cta,
+  href: resolveUrl(cta.href),
+}));
 const ctaIcons = ["depannage", "accessoires", "whoweare", "velux"] as const;
 
 const splitWithIcon = (value: string) =>
@@ -43,7 +65,7 @@ const splitWithIcon = (value: string) =>
     );
 
 const backgroundStyle = image
-  ? `background-image: url(${image.src});`
+  ? `background-image: url(${resolveUrl(image.src)});`
   : undefined;
 ---
 
