@@ -5,12 +5,11 @@ import { webcore } from 'webcoreui/integration'
 
 
 export default defineConfig({
-  site: 'https://www.yoursite.tld',
+  site: 'https://makstinyworkshop.github.io/Envolet_toit/',
   scopedStyleStrategy: 'where',
   integrations: [tailwind(), mdx(), webcore()],
   // Rajout de ces deux lignes pour GithubPages
   output: 'static',
-  base: '/Envolet_toit/',
   //
   markdown: {
     syntaxHighlight: 'prism',

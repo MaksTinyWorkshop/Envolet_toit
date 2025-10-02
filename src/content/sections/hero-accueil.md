@@ -6,10 +6,10 @@ content: >-
   Nous avons la solution avec votre produit Velux
 primaryCta:
   label: "DÉPANNAGE"
-  href: "/contact"
+  href: "/depannage"
 secondaryCta:
   label: "ACCESSOIRES"
-  href: "/services"
+  href: "/accessoires"
 tertiaryCta:
   label: "QUI SOMMES NOUS"
   href: "/a-propos"

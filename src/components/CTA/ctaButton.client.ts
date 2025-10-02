@@ -34,7 +34,7 @@ const submitCallbackForm = async (
   }
 
   const formData = new FormData(form);
-  const payload: CallbackPayload = {
+ const payload: CallbackPayload = {
     name: (formData.get("name") ?? "").toString().trim(),
     phone: (formData.get("phone") ?? "").toString().trim(),
   };
@@ -50,15 +50,34 @@ const submitCallbackForm = async (
   }
 
   try {
-    const response = await fetch(CALLBACK_ENDPOINT, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+    const endpointUrl = new URL(CALLBACK_ENDPOINT, window.location.href);
+    const isCrossOrigin = endpointUrl.origin !== window.location.origin;
 
-    if (!response.ok) {
+    const requestInit: RequestInit = {
+      method: "POST",
+    };
+
+    if (isCrossOrigin) {
+      const searchParams = new URLSearchParams({
+        name: payload.name,
+        phone: payload.phone,
+        timestamp: new Date().toISOString(),
+      });
+      requestInit.body = searchParams.toString();
+      requestInit.headers = {
+        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+      };
+      requestInit.mode = "no-cors";
+    } else {
+      requestInit.body = JSON.stringify(payload);
+      requestInit.headers = {
+        "Content-Type": "application/json",
+      };
+    }
+
+    const response = await fetch(CALLBACK_ENDPOINT, requestInit);
+
+    if (!requestInit.mode && !response.ok) {
       throw new Error(await response.text());
     }
 
@@ -195,3 +214,5 @@ document.addEventListener("astro:after-swap", () => {
   setupModal();
   bindTriggers();
 });
+
+export default initialise;
