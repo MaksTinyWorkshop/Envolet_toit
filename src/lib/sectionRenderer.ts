@@ -8,6 +8,7 @@ import MarkdownSection from '@components/MarkdownSection.astro';
 import FAQSection from '@components/FAQSection.astro';
 import ParcoursSection from '@components/ParcoursSection.astro';
 import ImagesGrid from '@components/ImagesGrid.astro';
+import MapSection from '@components/MapSection.astro';
 
 
 const componentMap = {
@@ -16,6 +17,7 @@ const componentMap = {
   parcours: ParcoursSection,
   faq: FAQSection,
   markdown: MarkdownSection,
+  map: MapSection,
   cta: CtaBanner,
   images: ImagesGrid,
   catalogue: CatalogueSection,
@@ -92,6 +94,15 @@ export async function resolveSection(
         },
       };
     }
+    case 'map':
+      return {
+        Component,
+        props: {
+          title: section.data.title,
+          caption: section.data.caption,
+          embedUrl: section.data.embedUrl,
+        },
+      };
     case 'cta':
       return {
         Component,

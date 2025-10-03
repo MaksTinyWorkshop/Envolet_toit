@@ -83,6 +83,13 @@ const markdownSchema = z.object({
     .optional()
 });
 
+const mapSchema = z.object({
+  component: z.literal('map'),
+  title: z.string().optional(),
+  caption: z.string().optional(),
+  embedUrl: z.string(),
+});
+
 const ctaSchema = z.object({
   component: z.literal('cta'),
   eyebrow: z.string().optional(),
@@ -145,6 +152,7 @@ const sectionSchema = z.discriminatedUnion('component', [
   parcoursSchema,
   faqSchema,
   markdownSchema,
+  mapSchema,
   ctaSchema,
   imagesSchema,
   catalogueSchema,
