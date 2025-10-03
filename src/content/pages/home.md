@@ -1,6 +1,6 @@
 ---
-title: "Envolet' Toit — Page d'accueil"
-description: "Un exemple de page d'accueil construite à partir de sections markdown."
+title: "Envolet' Toit | Home"
+description: "Page d'accueil"
 draft: false
 sections:
   - slug: hero-accueil

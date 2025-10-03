@@ -37,6 +37,9 @@ const resolveAsset = (path) => {
 };
 
 const { title, description, images, Content } = Astro.props as Props;
+const variant = description ?? "default";
+const isEntreprise = variant === "entreprise";
+const isTeam = variant === "team";
 const resolvedImages = images?.map((image) => ({
   ...image,
   src: resolveAsset(image.src),
@@ -44,7 +47,7 @@ const resolvedImages = images?.map((image) => ({
 ---
 
 {
-  description === "entreprise" && (
+  isEntreprise && (
     <section class="section-container markdown">
       {title && <h1>{title}</h1>}
 
@@ -66,9 +69,20 @@ const resolvedImages = images?.map((image) => ({
 }
 
 {
-  description === "team" && (
+  isTeam && (
     <section class="section-container markdown">
       {title && <h2>{title}</h2>}
+      <div class="prose">
+        <Content />
+      </div>
+    </section>
+  )
+}
+
+{
+  !isEntreprise && !isTeam && (
+    <section class="section-container markdown markdown--default">
+      {title && <h1>{title}</h1>}
       <div class="prose">
         <Content />
       </div>
